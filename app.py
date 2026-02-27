@@ -1,48 +1,29 @@
-<div style="max-width:400px;margin:auto;font-family:Arial;">
-  <h3 style="text-align:center;">🤖 AarohiAI</h3>
+@app.route("/ask", methods=["POST"])
+def ask():
+    data = request.get_json()
+    user_message = data.get("message")
 
-  <div id="chatbox" style="height:250px;border:1px solid #ccc;
-  overflow-y:auto;padding:10px;margin-bottom:10px;background:#f9f9f9;">
-  </div>
-
-  <input type="text" id="userInput" placeholder="Type your message..."
-  style="width:70%;padding:8px;">
-  
-  <button onclick="sendMessage()" 
-  style="padding:8px 12px;background:#4a4aff;color:white;border:none;">
-  Send
-  </button>
-</div>
-
-<script>
-async function sendMessage() {
-  const inputField = document.getElementById("userInput");
-  const message = inputField.value;
-  const chatbox = document.getElementById("chatbox");
-
-  if(message.trim() === "") return;
-
-  chatbox.innerHTML += "<div><b>You:</b> " + message + "</div>";
-
-  inputField.value = "";
-
-  try {
-    const response = await fetch("https://aarohai-server.onrender.com/ask", {
-      method: "POST",
-      headers: {
+    headers = {
+        "Authorization": f"Bearer {OPENAI_API_KEY}",
         "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ message: message })
-    });
+    }
 
-    const data = await response.json();
+    payload = {
+        "model": "gpt-4.1-mini",
+        "input": user_message
+    }
 
-    const aiReply = data.choices[0].message.content;
+    response = requests.post(
+        "https://api.openai.com/v1/responses",
+        headers=headers,
+        json=payload
+    )
 
-    chatbox.innerHTML += "<div><b>AarohiAI:</b> " + aiReply + "</div>";
+    result = response.json()
 
-  } catch (error) {
-    chatbox.innerHTML += "<div><b>Error:</b> Server not responding</div>";
-  }
-}
-</script>
+    try:
+        reply = result["output"][0]["content"][0]["text"]
+    except:
+        reply = "Error getting response from OpenAI"
+
+    return jsonify({"reply": reply})
