@@ -1,17 +1,3 @@
-from flask import Flask, request, jsonify
-from flask_cors import CORS
-import requests
-import os
-
-app = Flask(__name__)
-CORS(app)
-
-OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
-
-@app.route("/")
-def home():
-    return "AarohiAI Server Running 🚀"
-
 @app.route("/ask", methods=["POST"])
 def ask():
     data = request.get_json()
@@ -36,7 +22,8 @@ def ask():
         json=payload
     )
 
-    return jsonify(response.json())
+    result = response.json()
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=10000)
+    reply = result["choices"][0]["message"]["content"]
+
+    return jsonify({"reply": reply})
