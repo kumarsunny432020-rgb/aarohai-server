@@ -1,3 +1,17 @@
+import os
+import requests
+from flask import Flask, request, jsonify
+from flask_cors import CORS
+
+app = Flask(__name__)
+CORS(app)
+
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+
+@app.route("/")
+def home():
+    return "Server is running 🚀"
+
 @app.route("/ask", methods=["POST"])
 def ask():
     data = request.get_json()
@@ -21,7 +35,6 @@ def ask():
 
     result = response.json()
 
-    # 🔥 Proper error handling
     if "error" in result:
         return jsonify({"reply": "AI service temporarily unavailable 🤖"})
 
@@ -31,3 +44,6 @@ def ask():
         reply = "AI service temporarily unavailable 🤖"
 
     return jsonify({"reply": reply})
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=10000)
