@@ -41,7 +41,7 @@ def ask():
         response = requests.post(url, headers=headers, json=payload, timeout=20)
         result = response.json()
 
-        print(result)   # Render logs में Gemini response दिखेगा
+        print(result)   # Render logs में API response दिखेगा
 
         if "candidates" in result:
             reply = result["candidates"][0]["content"]["parts"][0]["text"]
@@ -54,5 +54,7 @@ def ask():
 
     return jsonify({"reply": reply})
 
+
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=10000)
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)
