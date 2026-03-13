@@ -21,7 +21,7 @@ def ask():
 
     user_message = data.get("message")
 
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-pro-flash:generateContent?key={GEMINI_API_KEY}"
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-pro-:generateContent?key={GEMINI_API_KEY}"
 
     payload = {
         "contents": [
