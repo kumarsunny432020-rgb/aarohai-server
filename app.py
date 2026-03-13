@@ -41,7 +41,12 @@ def ask():
         response = requests.post(url, headers=headers, json=payload, timeout=20)
         result = response.json()
 
-        reply = result["candidates"][0]["content"]["parts"][0]["text"]
+        print(result)   # Render logs में Gemini response दिखेगा
+
+        if "candidates" in result:
+            reply = result["candidates"][0]["content"]["parts"][0]["text"]
+        else:
+            reply = "Gemini API error 🤖"
 
     except Exception as e:
         print("Error:", e)
