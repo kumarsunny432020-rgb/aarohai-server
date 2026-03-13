@@ -6,7 +6,7 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 @app.route("/")
 def home():
@@ -17,29 +17,28 @@ def ask():
     data = request.get_json()
     user_message = data.get("message")
 
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key={GEMINI_API_KEY}"
+
+    payload = {
+        "contents": [
+            {
+                "parts": [
+                    {"text": user_message}
+                ]
+            }
+        ]
+    }
+
     headers = {
-        "Authorization": f"Bearer {OPENAI_API_KEY}",
         "Content-Type": "application/json"
     }
 
-    payload = {
-        "model": "gpt-4.1-mini",
-        "input": user_message
-    }
-
-    response = requests.post(
-        "https://api.openai.com/v1/responses",
-        headers=headers,
-        json=payload
-    )
+    response = requests.post(url, headers=headers, json=payload)
 
     result = response.json()
 
-    if "error" in result:
-        return jsonify({"reply": "AI service temporarily unavailable 🤖"})
-
     try:
-        reply = result["output"][0]["content"][0]["text"]
+        reply = result["candidates"][0]["content"]["parts"][0]["text"]
     except:
         reply = "AI service temporarily unavailable 🤖"
 
