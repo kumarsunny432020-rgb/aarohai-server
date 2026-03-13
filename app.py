@@ -21,7 +21,7 @@ def ask():
 
     user_message = data.get("message")
 
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-pro-:generateContent?key={GEMINI_API_KEY}"
+    url = f"https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}"
 
     payload = {
         "contents": [
@@ -46,7 +46,7 @@ def ask():
         if "candidates" in result:
             reply = result["candidates"][0]["content"]["parts"][0]["text"]
         else:
-            reply = "Gemini API error 🤖"
+            reply = "AI service temporarily unavailable 🤖"
 
     except Exception as e:
         print("Error:", e)
