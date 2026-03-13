@@ -15,9 +15,13 @@ def home():
 @app.route("/ask", methods=["POST"])
 def ask():
     data = request.get_json()
+
+    if not data or "message" not in data:
+        return jsonify({"reply": "No message provided"}), 400
+
     user_message = data.get("message")
 
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key={GEMINI_API_KEY}"
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}"
 
     payload = {
         "contents": [
@@ -33,13 +37,14 @@ def ask():
         "Content-Type": "application/json"
     }
 
-    response = requests.post(url, headers=headers, json=payload)
-
-    result = response.json()
-
     try:
+        response = requests.post(url, headers=headers, json=payload, timeout=20)
+        result = response.json()
+
         reply = result["candidates"][0]["content"]["parts"][0]["text"]
-    except:
+
+    except Exception as e:
+        print("Error:", e)
         reply = "AI service temporarily unavailable 🤖"
 
     return jsonify({"reply": reply})
